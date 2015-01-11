@@ -86,7 +86,7 @@
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>false</OmitFramePointers>
-      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\pm_common;..\ext\portmidi\porttime;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;.\videoInput;.\sdl\include;..\ext\oscpack;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\ext\tinyxml;..\ext\portmidi\pm_common;..\ext\portmidi\porttime;..\ext\libdtouch;..\common;..\ext\libfidtrack;..\ext\oscpack\osc;.\videoInput;.\sdl\include;..\ext\oscpack;.\hikVideoInput;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_WINDOWS;_CONSOLE;WIN32;NDEBUG;OSC_HOST_LITTLE_ENDIAN=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
@@ -100,11 +100,11 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>videoInput.lib;SDL2.lib;SDL2main.lib;msvcrt.lib;libcpmt.lib;ws2_32.lib;winmm.lib;DsSdk.lib;HCNetSDK.lib;PlayCtrl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>./reacTIVision.exe</OutputFile>
       <Version>1.5</Version>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;.\hikVideoInput;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -136,6 +136,7 @@
     <ClCompile Include="..\common\TuioServer.cpp" />
     <ClCompile Include="..\common\CameraEngine.cpp" />
     <ClCompile Include="..\common\CameraTool.cpp" />
+    <ClCompile Include="hikVideoInputCamera.cpp" />
     <ClCompile Include="videoInputCamera.cpp" />
     <ClCompile Include="..\common\FileCamera.cpp" />
     <ClCompile Include="..\common\FolderCamera.cpp" />
@@ -178,7 +179,6 @@
     <ClInclude Include="..\common\FrameProcessor.h" />
     <ClInclude Include="..\common\FrameThresholder.h" />
     <ClInclude Include="..\common\MidiServer.h" />
-    <ClInclude Include="..\common\RegionProcessor.h" />
     <ClInclude Include="..\common\Resources.h" />
     <ClInclude Include="..\common\RingBuffer.h" />
     <ClInclude Include="..\common\SDLinterface.h" />
@@ -186,6 +186,7 @@
     <ClInclude Include="..\common\TuioServer.h" />
     <ClInclude Include="..\common\CameraEngine.h" />
     <ClInclude Include="..\common\CameraTool.h" />
+    <ClInclude Include="hikVideoInputCamera.h" />
     <ClInclude Include="videoInputCamera.h" />
     <ClInclude Include="..\common\FileCamera.h" />
     <ClInclude Include="..\common\FolderCamera.h" />

@@ -57,7 +57,7 @@ CameraEngine* CameraTool::findCamera(const char* config_file) {
 	#endif
 	
 	#ifdef WIN32
-	camera = new videoInputCamera(config_file);
+	camera = new hikVideoInputCamera(config_file);
 	if( !camera->findCamera() ) delete camera;
 	else return camera;
 	#endif

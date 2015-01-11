@@ -22,6 +22,7 @@
 #ifdef WIN32
 #include <windows.h>
 #include "../win32/videoInputCamera.h"
+#include "../win32/hikVideoInputCamera.h"
 #endif
 
 #ifdef LINUX
