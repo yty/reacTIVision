@@ -289,7 +289,7 @@ unsigned char * hikVideoInputCamera::getFrame(){
 
 			if (config.frame) {
 					src += 3*(config.frame_yoff*cam_width);
-					dest += frame_width*frame_height-1;
+					//dest += frame_width*frame_height-1;
 					int xend = (cam_width-(frame_width+config.frame_xoff));
 
 					for (int i=0;i<frame_height;i++) {
@@ -299,18 +299,18 @@ unsigned char * hikVideoInputCamera::getFrame(){
  							r = *src++;
 							g = *src++;
 							b = *src++;
-							*dest-- = hibyte(r * 77 + g * 151 + b * 28);
+							*dest++ = hibyte(r * 77 + g * 151 + b * 28);
 						}
 						src +=  3*xend;
 					}
 			} else {
 				int size = cam_width*cam_height;
-				dest += size-1;
+				//dest += size-1;
 				for(int i=size;i>0;i--) {
 					r = *src++;
 					g = *src++;
 					b = *src++;
-					*dest-- = hibyte(r * 77 + g * 151 + b * 28);
+					*dest++ = hibyte(r * 77 + g * 151 + b * 28);
 				}
 			}
 
