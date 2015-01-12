@@ -148,7 +148,7 @@ void hikVideoInputCamera::listDevices() {
 
 bool hikVideoInputCamera::findCamera() {
 
-	//readSettings();
+	readSettings();
 	//std::vector <std::string> devList = VI->getDeviceList();
 
 	//int count = devList.size();
@@ -167,9 +167,9 @@ bool hikVideoInputCamera::findCamera() {
 bool hikVideoInputCamera::initCamera() {
 
 	//// TODO: get actual video formats
-	//if (config.cam_width<=0) config.cam_width=640;
-	//if (config.cam_height<=0) config.cam_height=480;
-	//if (config.cam_fps<=0) config.cam_fps=30;
+	if (config.cam_width<=0) config.cam_width=640;
+	if (config.cam_height<=0) config.cam_height=480;
+	if (config.cam_fps<=0) config.cam_fps=30;
 
 	//VI->setIdealFramerate(this->cameraID, config.cam_fps);
 	//if (config.compress == true) VI->setRequestedMediaSubType(VI_MEDIASUBTYPE_MJPG);
@@ -192,24 +192,25 @@ bool hikVideoInputCamera::initCamera() {
 		return FALSE;
 	}
 
-	config.cam_width = 1280;
-	config.cam_height = 960;
-	config.cam_fps = 30;
+	//config.cam_width = 1280;
+	//config.cam_height = 960;
+	//config.cam_fps = 30;
 
-	this->cam_width = 1280;
-	this->cam_height = 960;
+	this->cam_width = config.cam_width;
+	this->cam_height = config.cam_height;
 	this->fps = config.cam_fps;
 
 	applyCameraSettings();
 	setupFrame();
 	cam_buffer = new unsigned char[this->cam_width * this->cam_height];
 
-	m_cameraWidth = 1280;
-	m_cameraHeight = 960;
+	m_cameraWidth = config.cam_width;
+	m_cameraHeight = config.cam_height;
 	width = &m_cameraWidth;
 	height = &m_cameraHeight;
 	m_buffSize = m_cameraWidth * m_cameraHeight * 3;
 	
+	cout<<config.cam_width<<config.cam_height<<endl;
 
 	NET_DVR_Init();//初始化SDK,软件中只调用1次
 	//int isupport = NET_DVR_IsSupport(); //判断运行客户端的PC配置是否符合要求
