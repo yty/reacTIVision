@@ -204,14 +204,12 @@ bool hikVideoInputCamera::initCamera() {
 	setupFrame();
 	cam_buffer = new unsigned char[this->cam_width * this->cam_height];
 
-	m_cameraWidth = config.cam_width;
-	m_cameraHeight = config.cam_height;
+	m_cameraWidth = config.cam_width * 2;
+	m_cameraHeight = config.cam_height * 2;
 	width = &m_cameraWidth;
 	height = &m_cameraHeight;
 	m_buffSize = m_cameraWidth * m_cameraHeight * 3;
 	
-	cout<<config.cam_width<<config.cam_height<<endl;
-
 	NET_DVR_Init();//初始化SDK,软件中只调用1次
 	//int isupport = NET_DVR_IsSupport(); //判断运行客户端的PC配置是否符合要求
 	char tempStrAddr[128];
@@ -304,15 +302,25 @@ unsigned char * hikVideoInputCamera::getFrame(){
 						}
 						src +=  3*xend;
 					}
+					cout<<"not"<<endl;
 			} else {
-				int size = cam_width*cam_height;
-				//dest += size-1;
-				for(int i=size;i>0;i--) {
-					r = *src++;
-					g = *src++;
-					b = *src++;
-					*dest++ = hibyte(r * 77 + g * 151 + b * 28);
+				for (int h = 0; h < cam_height; h++){
+					for (int w = 0; w < cam_width; w++){
+						int index = ((h << 1) * (cam_width << 1) + (w << 1)) * 3;
+						r = src[index+ 0];
+						g = src[index+ 1];
+						b = src[index+ 2];
+						*dest++ = hibyte(r * 77 + g * 151 + b * 28);
+					}
 				}
+				//int size = cam_width*cam_height;
+				////dest += size-1;
+				//for(int i=size;i>0;i--) {
+				//	r = *(src+=2);
+				//	g = *(src+=2);
+				//	b = *(src+=2);
+				//	*dest++ = hibyte(r * 77 + g * 151 + b * 28);
+				//}
 			}
 
 			lost_frames = 0;
