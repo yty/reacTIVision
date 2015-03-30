@@ -10,7 +10,7 @@
 #define GET_B(sy,su,sv) ((298*((sy)-16) + 516*((su)-128) + 128)>> 8)
 // Check RGB value, if overflow then correct it
 #define CLIP(value)  (value)<0 ? 0 : ((value)>255 ? 255 : (value))
-
+unsigned char * destbuffer;
 //YUVתRGB
 void YUV2RGB(unsigned char *pYUV, unsigned char *pRGB,int w, int h)
 {
@@ -60,6 +60,7 @@ void CALLBACK DecCBFun(long nPort,char * pBuf,long nSize, FRAME_INFO * pFrameInf
 	if(lFrameType ==T_YV12)
 	{ 
 		YUV2RGB((unsigned char *)pBuf,pOutRGB,*width,*height);
+		destbuffer = (unsigned char *)pBuf;
 		* haveNewFrame = true;
 	}
 }
@@ -204,8 +205,8 @@ bool hikVideoInputCamera::initCamera() {
 	setupFrame();
 	cam_buffer = new unsigned char[this->cam_width * this->cam_height];
 
-	m_cameraWidth = config.cam_width * 2;
-	m_cameraHeight = config.cam_height * 2;
+	m_cameraWidth = config.cam_width;
+	m_cameraHeight = config.cam_height;
 	width = &m_cameraWidth;
 	height = &m_cameraHeight;
 	m_buffSize = m_cameraWidth * m_cameraHeight * 3;
@@ -298,21 +299,32 @@ unsigned char * hikVideoInputCamera::getFrame(){
  							r = *src++;
 							g = *src++;
 							b = *src++;
-							*dest++ = hibyte(r * 77 + g * 151 + b * 28);
+							*dest-- = hibyte(r * 77 + g * 151 + b * 28);
 						}
 						src +=  3*xend;
 					}
 					cout<<"not"<<endl;
 			} else {
+				
 				for (int h = 0; h < cam_height; h++){
 					for (int w = 0; w < cam_width; w++){
-						int index = ((h << 1) * (cam_width << 1) + (w << 1)) * 3;
+						//int index = ((h << 1) * (cam_width << 1) + (w << 1)) * 3;
+						int index = (h  * cam_width + w) * 3;
 						r = src[index+ 0];
 						g = src[index+ 1];
 						b = src[index+ 2];
+
 						*dest++ = hibyte(r * 77 + g * 151 + b * 28);
 					}
 				}
+			//		int size = cam_width*cam_height;
+			//dest += size-1;
+			//for(int i=size;i>0;i--) {
+			//	r = *src++;
+			//	g = *src++;
+			//	b = *src++;
+			//	*dest++ = hibyte(r * 77 + g * 151 + b * 28);
+			//}
 				//int size = cam_width*cam_height;
 				////dest += size-1;
 				//for(int i=size;i>0;i--) {

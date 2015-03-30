@@ -199,6 +199,13 @@
 		if(camera_element->Attribute("id")!=NULL) {
 			if (strcmp(camera_element->Attribute("id"), "auto" ) == 0) config.device=SETTING_AUTO;
 			else config.device = atoi(camera_element->Attribute("id"));
+		
+		}
+		if(camera_element->Attribute("hik_ip")!=NULL) {
+			//if (strcmp(camera_element->Attribute("id"), "auto" ) == 0) config.device=SETTING_AUTO;
+			//else config.device = atoi(camera_element->Attribute("id"));
+			//sprintf(hik_ip,"%s",camera_element->Attribute("hik_ip"));
+			hik_ip = camera_element->Attribute("hik_ip");
 		}
 
 		if(camera_element->Attribute("file")!=NULL) {

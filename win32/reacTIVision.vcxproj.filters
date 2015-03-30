@@ -350,6 +350,9 @@
     <ClInclude Include="hikVideoInputCamera.h">
       <Filter>Header Files\portvideo</Filter>
     </ClInclude>
+    <ClInclude Include="HIKCamera\src\HCNetSDK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="camera.xml">

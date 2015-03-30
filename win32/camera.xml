@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1" ?>
 <portvideo>
-    <camera id="0">
-        <capture width="1024" height="768" fps="max" compress="false" />
-        <settings brightness="default" contrast="default" gain="default" shutter="default" exposure="auto" sharpness="default" gamma="default" focus="default" />
+    <camera id="0" hik_ip="192.168.1.68">
+        <capture width="1280" height="960" fps="max" compress="false" />
+        <settings brightness="default" contrast="default" gain="default" shutter="default" exposure="default" sharpness="default" gamma="default" focus="default" />
         <frame width="max" height="max" xoff="0" yoff="0" />
     </camera>
 </portvideo>

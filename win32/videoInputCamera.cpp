@@ -102,7 +102,6 @@ bool videoInputCamera::startCamera()
 
 unsigned char* videoInputCamera::getFrame()
 {
-
 	if (VI->isFrameNew(cameraID)){
 
 		//unsigned char *src = VI->getPixels(cameraID,false,false);
@@ -142,7 +141,7 @@ unsigned char* videoInputCamera::getFrame()
 				r = *src++;
 				g = *src++;
 				b = *src++;
-				*dest-- = hibyte(r * 77 + g * 151 + b * 28);
+				*dest-- = hibyte(r * 77+g * 151+b * 28);
 			}
 		}
 

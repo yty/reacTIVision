@@ -18,7 +18,7 @@
 
 #ifndef CAMERAENGINE_H
 #define CAMERAENGINE_H
-
+#include <string>
 #include <fstream>
 #include <iostream>
 #include <limits.h>
@@ -49,6 +49,7 @@ public:
 		config_file = cfg;
 		settingsDialog=false;
         crop_frame=false;
+		readSettings();
 	}
 
 	virtual ~CameraEngine() { };
@@ -160,5 +161,7 @@ protected:
     int default_sharpness;
     int default_focus;
     int default_gamma;
+	//-----用于记录HIK相机的ip----------
+     std::string hik_ip;
 };
 #endif

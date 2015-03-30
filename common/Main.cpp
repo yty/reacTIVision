@@ -30,13 +30,14 @@
 #include "FidtrackFinder.h"
 #include "FidtrackFinderClassic.h"
 #include "CalibrationEngine.h"
-
+#include <windows.h>
 #ifdef LINUX
 #include <signal.h>
 #endif
 
 SDLinterface *engine;
-
+float scalew = 1.0;//缩放系数不能为0
+float scaleh = 1.0;//缩放系数不能为0
 static void terminate (int param)
 {
 	printf("terminating reacTIVision ...\n");
@@ -97,6 +98,7 @@ void readSettings(reactivision_settings *config) {
 	}
 
 	TiXmlDocument xml_settings( config->file );
+	std::cout << "load file: " << config->file << std::endl;
 	xml_settings.LoadFile();
 	if( xml_settings.Error() )
 	{
@@ -112,12 +114,16 @@ void readSettings(reactivision_settings *config) {
 	{
 		if(tuio_element->Attribute("host")!=NULL) sprintf(config->host,"%s",tuio_element->Attribute("host"));
 		if(tuio_element->Attribute("port")!=NULL) config->port = atoi(tuio_element->Attribute("port"));
+
 	}
 
 	TiXmlElement* camera_element = config_root.FirstChild("camera").Element();
 	if( camera_element!=NULL )
 	{
+	
 		if(camera_element->Attribute("config")!=NULL) sprintf(config->camera_config,"%s",camera_element->Attribute("config"));
+		if(camera_element->Attribute("scalew")!=NULL) scalew = atof(camera_element->Attribute("scalew"));
+		if(camera_element->Attribute("scaleh")!=NULL) scaleh = atof(camera_element->Attribute("scaleh"));
 	}
 
 	TiXmlElement* midi_element = config_root.FirstChild("midi").Element();
@@ -134,6 +140,7 @@ void readSettings(reactivision_settings *config) {
 	{
 		if(finger_element->Attribute("size")!=NULL) config->finger_size = atoi(finger_element->Attribute("size"));
 		if(finger_element->Attribute("sensitivity")!=NULL) config->finger_sensitivity = atoi(finger_element->Attribute("sensitivity"));
+		std::cout<<finger_element->Attribute("size");
 	}
 
 	TiXmlElement* image_element = config_root.FirstChild("image").Element();
@@ -321,7 +328,6 @@ void writeSettings(reactivision_settings *config) {
 
 
 CameraEngine* setupCamera(char *camera_config) {
-
     CameraEngine *camera = CameraTool::findCamera(camera_config);
     if (camera == NULL) return NULL;
 
@@ -359,7 +365,8 @@ void teardownCamera(CameraEngine *camera)
 int main(int argc, char* argv[]) {
 
 	reactivision_settings config;
-	sprintf(config.file,"none");
+	//sprintf(config.file,"none");
+	sprintf(config.file,"reacTIVision.xml");
 
 	const char *app_name = "reacTIVision";
 	const char *version_no = "1.5";
@@ -399,12 +406,14 @@ int main(int argc, char* argv[]) {
 #endif
 
 	readSettings(&config);
-    config.headless = headless;
 
+    config.headless = headless;
+//std::cout<<config.host<<std::endl;
 	CameraEngine *camera = setupCamera(config.camera_config);
 
 	engine = new SDLinterface(app_name, camera, &config);
-
+	engine->scalew = scalew;
+	engine->scaleh = scaleh;
     if (!headless) {
         switch (config.display_mode) {
             case 0: engine->setDisplayMode(engine->NO_DISPLAY); break;
@@ -436,6 +445,9 @@ int main(int argc, char* argv[]) {
 
 	calibrator = new CalibrationEngine(config.grid_config);
 	engine->addFrameProcessor(calibrator);
+
+	//HWND hwnd = AfxGetMainWnd()->m_hWnd;
+	//ShowWindow(hwnd,SW_HIDE);
 
 	engine->run();
 	teardownCamera(camera);

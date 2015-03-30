@@ -17,7 +17,48 @@
 */
 
 #include "SDLinterface.h"
+  #define IDC_NC 1002 
+#define WM_NOTIFY_ICON WM_USER + 100//自定义消息 处理托盘图标
+NOTIFYICONDATA nc;
+bool hiddenWin = true;
+WNDPROC currentWndProc;
+NOTIFYICONDATA nid;
+//托盘绑定窗口
+void toTray(HWND hwnd)
+{
+	
+    nid.cbSize = sizeof(NOTIFYICONDATA);
+    nid.hWnd = hwnd; 
+    nid.uID = IDC_NC;
+    nid.uCallbackMessage = WM_NOTIFY_ICON;
+    nid.hIcon = (HICON)::LoadImage(NULL,"icon/icon.ico",IMAGE_ICON,0,0,LR_LOADFROMFILE);
+	//HBITMP hBitmap=(HICON)::LoadImage(NULL,"icon/icon.ico",IMAGE_ICON,0,0,LR_LOADFROMFILE);
+    nid.uFlags = 
+        NIF_ICON 
+        | NIF_MESSAGE 
+        | NIF_TIP; 
+    lstrcpy(nid.szTip, TEXT("超澜数码 terry"));
+    Shell_NotifyIcon(NIM_ADD, &nid);
+}
 
+ LRESULT CALLBACK trayProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+//static LRESULT CALLBACK  trayProc(HWND hwnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+	switch (Msg){
+	case WM_NOTIFY_ICON:
+		switch (lParam)
+		{
+		case  WM_LBUTTONDBLCLK:
+				hiddenWin = !hiddenWin;
+				if(hiddenWin)
+					ShowWindow(hwnd,SW_HIDE);
+				else
+					ShowWindow(hwnd,SW_SHOW);
+				break;
+		}
+		break;
+	}
+	return CallWindowProc(currentWndProc, hwnd, Msg, wParam, lParam);
+}
 // the thread function which contantly retrieves the latest frame
 int getFrameFromCamera(void *obj) {
 
@@ -81,7 +122,7 @@ void SDLinterface::stop() {
 
 // the principal program sequence
 void SDLinterface::run() {
-
+	
  	if( camera_==NULL ) {
 		if( !setupWindow() ) return;
 		allocateBuffers();
@@ -113,7 +154,15 @@ void SDLinterface::run() {
 				help_text.push_back(*processor_line);
 			}
 		}
-        
+		/*
+	
+	//std::cout<<nc.uFlags<<"..";
+	//ShowWindow(SW_HIDE,&window_);              
+    // NOTIFYICON_VERSION_4 is prefered
+    //nid.uVersion = NOTIFYICON_VERSION_4;
+	//	SDL_HideWindow(window_);
+	*/
+
         if (!headless_) {
             
             if(fullscreen_) {
@@ -128,7 +177,6 @@ void SDLinterface::run() {
                 std::cout << *help_line << std::endl;
             } std::cout << std::endl;
         }
-
 		mainLoop();
 		endLoop();
 
@@ -139,6 +187,11 @@ void SDLinterface::run() {
 
 	teardownWindow();
 	freeBuffers();
+	//NOTIFYICONDATA nid; 
+	//nid.hWnd= g_hWnd; 
+	 nid.uID = IDC_NC;
+	//nid.uID=MAIN_ICON;  //删除时如果不指定uid不会删除.但是异常退出的仍然无法删除.
+	Shell_NotifyIcon(NIM_DELETE, &nid); 
 }
 
 void SDLinterface::showError(const char* error)
@@ -223,7 +276,11 @@ void SDLinterface::mainLoop()
 				break;
 			case SOURCE_DISPLAY: {
 				memcpy(sourceBuffer_,cameraReadBuffer,ringBuffer->size());
+				
 				SDL_UpdateTexture(texture_,NULL,sourceBuffer_,width_);
+
+				//-------此处修改原生的着色设备
+				//	SDL_RenderCopy(renderer_, texture_, &srcRect, &destRect);
 				SDL_RenderCopy(renderer_, texture_, NULL, NULL);
 				if (help_) drawHelp(sourceBuffer_);
 				camera_->drawGUI(displayImage_);
@@ -345,19 +402,21 @@ bool SDLinterface::setupWindow() {
 
 	if ( window_ == NULL ) {
 		printf("Could not open window: %s\n", SDL_GetError());
-		SDL_Quit();
+		SDL_Quit();       
 		return false;
 	} else SDL_SetWindowTitle(window_,app_name_.c_str());
-
 	SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
 	SDL_RenderClear(renderer_);
 	SDL_RenderPresent(renderer_);
+				HWND hwnd = GetActiveWindow();
+	//HWND hwnd  = FindWindow("SDL_WINDOW",NULL); //希望找到资源管理器
 
-	/*iconImage_ = getIcon();
-	#ifndef __APPLE__
-	SDL_SetWindowIcon(window_, iconImage_);
-	#endif*/
 
+	toTray(hwnd);
+	currentWndProc = (WNDPROC)GetWindowLongPtr(hwnd, GWL_WNDPROC);
+	SetWindowLongPtr(hwnd, GWL_WNDPROC, (long)trayProc);std::cout<<"初始化成功";
+		ShowWindow(hwnd,SW_HIDE);
+		ShowWindow(GetConsoleWindow(),SW_HIDE);
 	FontTool::init();
 	return true;
 }
@@ -374,7 +433,7 @@ void SDLinterface::process_events()
 {
     SDL_Event event;
     while( SDL_PollEvent( &event ) ) {
-
+		//std::cout<<event.syswm.msg;
         switch( event.type ) {
 		case SDL_KEYDOWN:
 			if (error_) { error_ = false; return; }
@@ -517,8 +576,10 @@ void SDLinterface::allocateBuffers()
 #endif
 
     if(!headless_) {
-        texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_,height_);
-        displayImage_ = SDL_CreateRGBSurface(0,width_,height_,32,rmask,gmask,bmask,amask);
+		if(scalew<=0) scalew = 1.0;
+		if(scaleh<=0) scaleh = 1.0;
+		texture_ = SDL_CreateTexture(renderer_,SDL_PIXELFORMAT_IYUV,SDL_TEXTUREACCESS_STATIC,width_/scalew	,height_/scaleh);
+        displayImage_ = SDL_CreateRGBSurface(0,width_/scalew	,height_/scaleh,32,rmask,gmask,bmask,amask);
         SDL_SetSurfaceBlendMode(displayImage_, SDL_BLENDMODE_BLEND);
         display_ = SDL_CreateTextureFromSurface(renderer_,displayImage_);
 
@@ -643,7 +704,12 @@ SDLinterface::SDLinterface(const char* name, CameraEngine *camera, reactivision_
 	window_ = NULL;
 	sourceBuffer_ = NULL;
 	destBuffer_ = NULL;
-		
+	
+	srcRect.x = 0;srcRect.x = 0;
+	srcRect.w = 500;srcRect.h = 500;
+	destRect.x = 0;destRect.y = 0;
+	destRect.w = 400;destRect.h = 400;
+
 	help_text.push_back("display:");
  	help_text.push_back("   n - no image");
 	help_text.push_back("   s - source image");

@@ -57,11 +57,12 @@ CameraEngine* CameraTool::findCamera(const char* config_file) {
 	#endif
 	
 	#ifdef WIN32
-	camera = new hikVideoInputCamera(config_file);
+	camera = new videoInputCamera(config_file);
+	if( !camera->findCamera() ) camera = new hikVideoInputCamera(config_file);
 	if( !camera->findCamera() ) delete camera;
 	else return camera;
 	#endif
-
+	
 	#ifdef __APPLE__
 	camera = new DC1394Camera(config_file);
 	if( !camera->findCamera() ) delete camera;

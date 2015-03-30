@@ -67,6 +67,8 @@ public:
 	CameraEngine *camera_;
 	const char* camera_config;
 
+	float scalew;
+	float scaleh;
 	bool running_;
 	bool error_;
 	bool pause_;
@@ -159,6 +161,8 @@ private:
 
 	std::string app_name_;
 	std::vector<std::string> help_text;
+
+	SDL_Rect srcRect,destRect;
 };
 
 #endif

@@ -5,8 +5,8 @@
 #include <string.h>
 #include "stdio.h"
 #include "time.h"
-#include "HCNetSDK.h"
-#include "plaympeg4.h"
+#include "../HIKCamera/src/HCNetSDK.h"
+#include "../HIKCamera/src/plaympeg4.h"
 #include "../common/CameraEngine.h"
 
 using namespace std;
@@ -80,5 +80,7 @@ class hikVideoInputCamera : public CameraEngine{
 		int m_buffSize;			    //像素数据buff的尺寸
 		bool m_isWork;			    //设置设备的工作状态
 		HIKCameraDef m_def;
+		std::string hikip;
+		bool isfilesetting;
 
 };

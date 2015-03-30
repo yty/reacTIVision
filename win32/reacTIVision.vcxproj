@@ -67,9 +67,9 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>videoInputD.lib;SDL2.lib;SDL2main.lib;msvcrtd.lib;ole32.lib;libcpmtd.lib;ws2_32.lib;winmm.lib;DsSdk.lib;HCNetSDK.lib;PlayCtrl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)reacTIVision.exe</OutputFile>
-      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\videoInput;.\sdl\lib;.\hikVideoInput;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)reacTIVision.pdb</ProgramDatabaseFile>
@@ -186,6 +186,7 @@
     <ClInclude Include="..\common\TuioServer.h" />
     <ClInclude Include="..\common\CameraEngine.h" />
     <ClInclude Include="..\common\CameraTool.h" />
+    <ClInclude Include="HIKCamera\src\HCNetSDK.h" />
     <ClInclude Include="hikVideoInputCamera.h" />
     <ClInclude Include="videoInputCamera.h" />
     <ClInclude Include="..\common\FileCamera.h" />

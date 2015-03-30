@@ -9,7 +9,7 @@
 
 	<tuio host="127.0.0.1" port="3333" />
 	<midi config="midi.xml" />
-	<camera config="camera.xml" />
+	
 	<finger size="12" sensitivity="100" />
 	<fiducial engine="amoeba" tree="small.trees" />
 	<image display="dest" equalize="false" fullscreen="false" />
@@ -17,6 +17,7 @@
 	<calibration file="default.grid" invert="xya" />
     -->
     <finger size="0" sensitivity="75" />
+    <camera config="camera.xml" scalew="0.6" scaleh="0.6" />
     <image display="src" equalize="false" fullscreen="false" />
     <threshold gradient="32" tile="10" threads="max" />
     <calibration file="default.grid" invert=" " />
